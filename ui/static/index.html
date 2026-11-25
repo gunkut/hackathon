@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TazeRota · SKT Kurtarma Paneli</title>
+  <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+<div class="page">
+  <header class="card topbar">
+    <div class="brand"><span class="logo"></span><span class="brand-name">TazeRota</span></div>
+    <span class="subtitle">SKT Kurtarma Paneli</span>
+    <nav class="tabs">
+      <button class="tab active" data-view="overview">Genel bakış</button>
+      <button class="tab" data-view="risky">Riskli lotlar</button>
+      <button class="tab" data-view="orders">Sevk emirleri</button>
+      <button class="tab" data-view="notify">Bildirimler</button>
+      <button class="tab" data-view="early">Erken uyarı</button>
+      <button class="tab" data-view="reports">Raporlar</button>
+    </nav>
+    <span class="mode">Mod: İnsan onayı</span>
+    <span class="meta" id="meta">25.11.2026 · Takım Wakanda</span>
+  </header>
+
+  <section class="kpis">
+    <div class="card kpi"><div class="kpi-label">Riskli lot</div><div class="kpi-value" id="k-risky">–</div><div class="kpi-sub" id="k-risky-sub"></div></div>
+    <div class="card kpi"><div class="kpi-label">Bayilere sevk</div><div class="kpi-value" id="k-ship">–</div><div class="kpi-sub" id="k-ship-sub"></div></div>
+    <div class="card kpi"><div class="kpi-label">Bağış</div><div class="kpi-value" id="k-donate">–</div><div class="kpi-sub" id="k-donate-sub"></div></div>
+    <div class="card kpi kpi-hero"><div class="kpi-label">İmha oranı</div><div class="kpi-value" id="k-dispose">–</div><div class="kpi-sub" id="k-dispose-sub"></div></div>
+    <div class="card kpi"><div class="kpi-label">Erken uyarı</div><div class="kpi-value warn" id="k-early">–</div><div class="kpi-sub" id="k-early-sub"></div></div>
+  </section>
+
+  <main class="grid">
+    <!-- left column (overview) -->
+    <section class="card col-left view" id="view-overview">
+      <div class="panel-head"><h2>Riskli lotlar</h2><span class="muted small">sevke kalan güne göre</span></div>
+      <table class="lots">
+        <thead><tr><th>Ürün</th><th class="num">Adet</th><th class="num">Gün</th><th>Durum</th></tr></thead>
+        <tbody id="risky-list"></tbody>
+      </table>
+      <div class="panel-head early-head"><h2 class="warn" id="early-title">Erken uyarı · 180 gün</h2><span class="muted small">tahmini fazla</span></div>
+      <div id="early-list"></div>
+    </section>
+
+    <!-- full-width tabs -->
+    <section class="card col-wide view hidden" id="view-risky">
+      <div class="panel-head"><h2>Riskli lotlar</h2><span class="muted small" id="risky-scope"></span></div>
+      <div class="scroll"><table class="wide"><thead><tr>
+        <th>Lot</th><th>Ürün</th><th>Raf</th><th>SKT</th><th class="num">Sevke gün</th><th class="num">Adet</th>
+        <th class="num">Kapasite</th><th class="num">Sevk</th><th class="num">Bağış</th><th class="num">İmha</th>
+        <th class="num">Müdahalesiz imha</th><th>Durum</th></tr></thead><tbody id="risky-table"></tbody></table></div>
+    </section>
+
+    <section class="card col-wide view hidden" id="view-orders">
+      <div class="panel-head"><h2>Sevk emirleri</h2><span class="muted small" id="orders-scope"></span></div>
+      <div class="scroll"><table class="wide"><thead><tr>
+        <th>Emir No</th><th>Lot</th><th>Ürün</th><th>Alıcı</th><th>Tür</th><th class="num">Adet</th>
+        <th>Sipariş</th><th>Teslim</th><th>Raf</th><th>Durum</th></tr></thead><tbody id="orders-table"></tbody></table></div>
+    </section>
+
+    <section class="card col-wide view hidden" id="view-notify">
+      <div class="panel-head"><h2>Bildirimler</h2><span class="muted small" id="notify-scope"></span></div>
+      <div class="scroll"><table class="wide"><thead><tr>
+        <th>Alıcı</th><th>Bildirim</th><th>Detay</th><th>Gönderim</th><th>Durum</th></tr></thead><tbody id="notify-table"></tbody></table></div>
+      <p class="footnote">Bildirimler panelde kayıt olarak tutulur; e-posta veya SMS gönderilmez.</p>
+    </section>
+
+    <section class="card col-wide view hidden" id="view-early">
+      <div class="panel-head"><h2>Erken uyarı</h2><span class="muted small" id="early-scope"></span></div>
+      <div class="scroll"><table class="wide"><thead><tr>
+        <th>Lot</th><th>Ürün</th><th>Grup</th><th class="num">Depo</th><th class="num">Sevke gün</th><th class="num">SKT'ye gün</th>
+        <th class="num">Günlük talep</th><th class="num">SKT'ye kadar kapasite</th><th class="num">Tahmini fazla</th>
+        <th class="num">Stok biter (gün)</th><th>Durum</th></tr></thead><tbody id="early-table"></tbody></table></div>
+      <p class="footnote">Tahmini fazla = depo miktarı − bayilerin mevcut satış hızıyla SKT'ye kadar satabileceği miktar (aynı ürünün daha erken SKT'li lotları önce düşülür).</p>
+    </section>
+
+    <section class="card col-wide view hidden" id="view-reports">
+      <div class="panel-head"><h2>Raporlar</h2><span class="muted small" id="report-scope"></span></div>
+      <div class="report-grid">
+        <div>
+          <h3>Senaryo karşılaştırması</h3>
+          <table class="wide"><thead><tr><th>Senaryo</th><th class="num">Sevk</th><th class="num">Bağış</th><th class="num">İmha</th><th class="num">İmha oranı</th></tr></thead>
+          <tbody id="scenario-table"></tbody></table>
+        </div>
+        <div>
+          <h3>Plan onayı</h3>
+          <p id="approval-status" class="muted">–</p>
+          <h3>Dışa aktar</h3>
+          <div class="downloads">
+            <a class="btn btn-outline" id="dl-csv" href="#">Öneriler (CSV)</a>
+            <a class="btn btn-outline" id="dl-json" href="#">Plan (JSON)</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- middle: lot detail + dispatch workflow (scrollable) -->
+    <section class="card col-mid" id="detail">
+      <div class="detail-head">
+        <div class="panel-head"><h2 id="d-title">–</h2><span class="chip chip-purple" id="d-chip"></span></div>
+        <div class="sub-row"><span class="muted small" id="d-sub"></span><button class="link small" id="to-flow">Sevk süreci ↓</button></div>
+      </div>
+      <div class="detail-body" id="detail-body">
+        <table class="dealers">
+          <thead><tr><th>Bayi</th><th>15 günlük satış</th><th class="num">Stok</th><th class="num">Kapasite</th><th class="num">Öneri</th></tr></thead>
+          <tbody id="d-dealers"></tbody>
+        </table>
+        <div class="dist-head"><h3>Lot dağılımı</h3><strong id="d-qty"></strong></div>
+        <div class="dist" id="d-dist"></div>
+        <p class="footnote" id="d-note"></p>
+
+        <div class="flow" id="flow">
+          <div class="flow-head"><h3>Sevk süreci</h3><span class="muted small" id="flow-hint"></span></div>
+          <ol class="stepper" id="stepper"></ol>
+          <table class="orders">
+            <thead><tr><th>Emir No</th><th>Alıcı</th><th>Tür</th><th class="num">Adet</th><th>Durum</th></tr></thead>
+            <tbody id="o-rows"></tbody>
+          </table>
+          <div class="order-cards">
+            <div class="order-card" id="o-card"></div>
+            <div class="notify-card" id="n-card"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- right: agent -->
+    <section class="card col-right chat">
+      <div class="panel-head"><div class="agent-title"><span class="dot"></span><h2>TazeRota Ajanı</h2></div><span class="muted small strong" id="chat-mode">Bedrock</span></div>
+      <div class="messages" id="messages">
+        <div class="suggestions" id="suggestions">
+          <button class="suggest">Riskli lotları analiz et ve öneri ver</button>
+          <button class="suggest">Pınar Hindi Uzun Sosis neden bağışa kaldı?</button>
+          <button class="suggest">Erken uyarıdaki ürünler için ne önerirsin?</button>
+        </div>
+      </div>
+      <div class="approve-box">
+        <div id="box-proposal">
+          <div class="muted small" id="approve-q">Bu planı onaylıyor musunuz?</div>
+          <div class="actions">
+            <button class="btn btn-primary" id="btn-approve">Onayla</button>
+            <button class="btn btn-outline" id="btn-threshold">Eşiği değiştir</button>
+          </div>
+        </div>
+        <div id="box-status" class="hidden">
+          <div class="muted small" id="status-label">Lot durumu</div>
+          <div class="status-pill" id="status-pill"></div>
+          <div class="status-actions">
+            <button class="link small hidden" id="btn-dispatch">Sevk emirlerini oluştur</button>
+          </div>
+        </div>
+        <div class="reset-row"><button class="link small muted hidden" id="btn-reset">Demoyu sıfırla</button></div>
+        <form id="chat-form" class="ask"><input id="chat-input" autocomplete="off" placeholder="Ajana sor..." maxlength="2000"></form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="threshold-dialog" class="card">
+  <form method="dialog" id="threshold-form">
+    <h2>Eşikleri değiştir</h2>
+    <label>Riskli lot: sakıncalı sevke kalan gün ≤ <input type="number" id="t-risk" min="0" max="365" required></label>
+    <label>Erken uyarı: sakıncalı sevke kalan gün ≤ <input type="number" id="t-early" min="0" max="730" required></label>
+    <p class="muted small" id="t-error"></p>
+    <div class="actions">
+      <button class="btn btn-outline" value="cancel" formnovalidate>Vazgeç</button>
+      <button class="btn btn-outline" value="reset" formnovalidate>Varsayılan (60 / 180)</button>
+      <button class="btn btn-primary" value="ok">Uygula</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="static/app.js"></script>
+</body>
+</html>

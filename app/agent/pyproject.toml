@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling ~= 1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent"
+version = "0.1.0"
+description = "TazeRota SKT kurtarma ajanı: AgentCore Runtime Application using Strands SDK"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "aws-opentelemetry-distro ~= 0.21.0",
+    "bedrock-agentcore[strands-agents] >= 1.18.1, < 2.0.0",
+    "boto3 >= 1.40.0",
+    "botocore[crt] ~= 1.43.0",
+    "strands-agents >= 1.62.0, < 2.0.0",
+]
+
+[dependency-groups]
+# Local only (excluded from the AgentCore CodeZip): tests, Excel loader, demo UI server.
+dev = [
+    "pytest >= 8.0",
+    "openpyxl >= 3.1",
+    "fastapi >= 0.115",
+    "uvicorn >= 0.30",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "../../src/data"]
+testpaths = ["tests"]

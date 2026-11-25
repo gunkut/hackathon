@@ -1,0 +1,10 @@
+{
+  "targets": {
+    "default": {
+      "stackArn": "arn:aws:cloudformation:us-east-1:456725537853:stack/AgentCore-SktRiskAgent-default/f8a690b0-e8bb-11f1-88f8-0e335c046cd7",
+      "resources": {
+        "credentials": {}
+      }
+    }
+  }
+}

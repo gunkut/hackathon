@@ -1,0 +1,43 @@
+{
+  "name": "SktRiskAgent",
+  "version": 2,
+  "managedBy": "CDK",
+  "runtimes": [
+    {
+      "name": "agent",
+      "build": "CodeZip",
+      "modelProvider": "Bedrock",
+      "entrypoint": "main.py",
+      "codeLocation": "app/agent",
+      "runtimeVersion": "PYTHON_3_14",
+      "protocol": "HTTP",
+      "envVars": [
+        { "name": "UNIFIED_TRACES_DESTINATION_ENABLED", "value": "true" }
+      ],
+      "additionalPolicies": ["policies/dynamodb-read.json", "policies/dynamodb-dispatch.json"]
+    }
+  ],
+  "memories": [
+    {
+      "name": "agentMemory",
+      "eventExpiryDuration": 30,
+      "strategies": [
+        {
+          "type": "SEMANTIC",
+          "namespaceTemplates": [
+            "/users/{actorId}/facts"
+          ]
+        },
+        {
+          "type": "EPISODIC",
+          "namespaceTemplates": [
+            "/episodes/{actorId}/{sessionId}"
+          ],
+          "reflectionNamespaceTemplates": [
+            "/episodes/{actorId}"
+          ]
+        }
+      ]
+    }
+  ]
+}

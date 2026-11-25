@@ -1,0 +1,22 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "TazeRotaTablesReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:DescribeTable"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/tazerota-lots",
+        "arn:aws:dynamodb:*:*:table/tazerota-dealers",
+        "arn:aws:dynamodb:*:*:table/tazerota-sales",
+        "arn:aws:dynamodb:*:*:table/tazerota-approvals"
+      ]
+    }
+  ]
+}
